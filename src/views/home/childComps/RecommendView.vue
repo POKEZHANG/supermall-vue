@@ -29,7 +29,7 @@
   width: 100%;
   text-align: center;
   padding: 15px 0;
-  border-bottom: 7px solid #eee;
+  border-bottom: 10px solid #eee;
 }
 
 .recommend-item {
