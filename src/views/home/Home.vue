@@ -3,51 +3,22 @@
     <NarBar class="home-nav">
       <div slot="center">购物街</div>
     </NarBar>
-    <HomeSwiper :banners="banners"></HomeSwiper>
-    <RecommendView :recommends="recommends"></RecommendView>
-    <FeatureView></FeatureView>
-    <TabControl :titles="['流行','新款','精选']"
-    class="tab-control" @tabClick="tabClick"></TabControl>
-    <GoodsList :goods="showGoods"></GoodsList>
-    <ul>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-    </ul>
+    <scroll class="content" 
+            ref="scroll"
+            :probeType="3"
+            @scroll="scroll"
+            :pullUpLoad="true"
+            @pullingUp="pullingUp">
+      <HomeSwiper :banners="banners"></HomeSwiper>
+      <RecommendView :recommends="recommends"></RecommendView>
+      <FeatureView></FeatureView>
+      <TabControl :titles="['流行','新款','精选']"
+                  class="tab-control" 
+                  @tabClick="tabClick"></TabControl>
+      <GoodsList :goods="showGoods"></GoodsList>
+    </scroll>
+    <BackTop @click.native="backTop"
+             v-show="isShowBackTop"></BackTop>
   </div>
 </template>
 
@@ -59,6 +30,8 @@
   import NarBar from 'components/common/navbar/NavBar'
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
+  import scroll from 'components/common/scroll/Scroll'
+  import BackTop from 'components/content/backTop/BackTop'
 
   import {
     getHomeMultidatachild, 
@@ -73,7 +46,9 @@
       RecommendView,
       FeatureView,
       TabControl,
-      GoodsList
+      GoodsList,
+      scroll,
+      BackTop
     },
     data() {
       return {
@@ -84,7 +59,8 @@
           'new': {page: 0, list:[]},
           'sell': {page: 0, list:[]}
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        isShowBackTop: false, 
       }
     },
     created() {
@@ -117,6 +93,17 @@
             break
         }
       },
+      backTop() {
+        this.$refs.scroll.scrollTo(0, 0, 500)
+      },
+      scroll(position) {
+        // console.log(position);
+        this.isShowBackTop = -position.y > 1000
+      },
+      pullingUp() {
+        console.log('more');
+        this.getHomeGoods(this.currentType)
+      },
 
 
       // 网络请求相关的方法
@@ -133,6 +120,8 @@
           console.log(res);
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page += 1  //这个是data里面的数据+1
+
+          this.$refs.scroll.finishPullUp()
         })
       },
     },
@@ -142,6 +131,7 @@
 <style scoped>
   #home {
     padding-top: 44px;
+    height: 100vh;
   }
 
   .home-nav {
@@ -164,4 +154,19 @@
   }
 
   /* 实现吸顶效果 */
+
+  .content {
+    /* height: 300px; */
+    overflow: hidden;
+
+    position: absolute;
+    top: 44px;
+    bottom: 49px;
+  }
+  /* .content {
+    height: calc(100% - 93px);
+    overflow: hidden;
+    margin-top: 44px;
+  } */
+
 </style>
