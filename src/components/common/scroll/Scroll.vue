@@ -1,5 +1,8 @@
 <template>
-  <div class="wrapper" ref="wrapper">
+<!-- better-scroll要注意结构问题,
+     先有一个wrapper,再包装一个content,
+     保证最外层只有一个类 -->
+  <div class="wrapper" ref="wrapper"> 
     <div class="content">
       <slot></slot>
     </div>
@@ -47,10 +50,13 @@
     },
     methods: {
       scrollTo(x, y, time=500) {
-        this.scroll.scrollTo(x, y, time)
+        this.scroll && this.scroll.scrollTo(x, y, time)
       },
       finishPullUp() {
-        this.scroll.finishPullUp()
+        this.scroll && this.scroll.finishPullUp()
+      },
+      refresh() {
+        this.scroll && this.scroll.refresh()
       }
     },
   }
