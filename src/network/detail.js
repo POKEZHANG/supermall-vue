@@ -9,6 +9,13 @@ export function getDetail(iid) {
   })
 }
 
+export function getRecommend(iid) {
+  return request({
+    url: '/recommend'
+  })
+}
+
+
 
 //面向对象封装的思想
 export class Goods {

@@ -1,13 +1,15 @@
 <template>
   <div id="detail">
-    <DetailNavBar class="datail-navbar"></DetailNavBar>
+    <DetailNavBar class="datail-navbar" @titleClick="titleClick"></DetailNavBar>
     <Scroll class="content" ref="scroll">
       <DetailSwiper :topImages="topImages"></DetailSwiper>
       <DetailBaseInfo :goods="goods"></DetailBaseInfo>
       <DetailShopInfo :shop="shop"></DetailShopInfo>
       <DetailGoodsInfo :detailInfo="detailInfo"
                        @imgLoad="imgLoad"></DetailGoodsInfo>
-      <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
+      <DetailParamInfo :paramInfo="paramInfo" ref="params"></DetailParamInfo>
+      <DetailCommentInfo :commentInfo="commentInfo" ref="comment"></DetailCommentInfo>
+      <GoodsList :goods="recommends" ref="recommends"></GoodsList>
     </Scroll>
   </div>
 </template>
@@ -19,9 +21,12 @@
   import DetailShopInfo from './childComs/DetailShopInfo'
   import DetailGoodsInfo from './childComs/DetailGoodsInfo'
   import DetailParamInfo from './childComs/DetailParamInfo'
+  import DetailCommentInfo from './childComs/DetailCommentInfo'
+  import GoodsList from 'components/content/goods/GoodsList'
   import Scroll from 'components/common/scroll/Scroll'
 
-  import {getDetail, Goods, Shop, GoodsParam} from 'network/detail'
+  import {getDetail, getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
+  import {debounce} from 'common/utils.js'
 
   
 
@@ -35,6 +40,10 @@
         shop: {},
         detailInfo: {},
         paramInfo: {},
+        commentInfo: {},
+        recommends: [],
+        themeTopYs: [],
+        getThemeTopY: null
       }
     },
     components: {
@@ -44,6 +53,8 @@
       DetailShopInfo,
       DetailGoodsInfo,
       DetailParamInfo,
+      DetailCommentInfo,
+      GoodsList,
       Scroll
     },
     created() {
@@ -57,11 +68,55 @@
         this.shop = new Shop(data.shopInfo)
         this.detailInfo = data.detailInfo
         this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
+        if(data.rate.cRate !== 0) {
+          this.commentInfo = data.rate.list[0]
+        }
+        // this.$nextTick(() => {
+        //   this.themeTopY = []
+        //   console.log(this.themeTopYs);
+        //   this.themeTopYs.push(0)
+        //   this.themeTopYs.push(this.$refs.params.$el.offsetTop)
+        //   this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+        //   this.themeTopYs.push(this.$refs.recommends.$el.offsetTop)
+        //   console.log(this.themeTopYs);
+
+        // })
       })
+      getRecommend().then(res => {
+        this.recommends = res.data.list
+      })
+      this.getThemeTopY = debounce(() => {
+        this.themeTopYs = [];
+        this.themeTopYs.push(0);
+        this.themeTopYs.push(this.$refs.params.$el.offsetTop - 44);
+        this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44);
+        this.themeTopYs.push(this.$refs.recommends.$el.offsetTop - 44);
+        console.log(this.themeTopYs);
+      })
+      
+    },
+    mounted() {
+      this.$bus.$on('detailItemImgLoad', () => {
+      this.$refs.scroll && refresh()
+      })
+    },
+    updated() {
+      // this.themeTopY = []
+
+      // this.themeTopYs.push(0)
+      // this.themeTopYs.push(this.$refs.params.$el.offsetTop)
+      // this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+      // this.themeTopYs.push(this.$refs.recommends.$el.offsetTop)
+      // console.log(this.themeTopYs);
     },
     methods: {
       imgLoad() {
         this.$refs.scroll.refresh()
+        this.getThemeTopY()
+      },
+      titleClick(index) {
+        console.log(index);
+        this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200)
       }
     },
   }

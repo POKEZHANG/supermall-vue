@@ -84,7 +84,7 @@
     mounted() {
       const refresh = debounce(this.$refs.scroll.refresh, 200) //将refresh函数传入debounce中生成一个新的函数,这个函数会进行防抖
 
-      this.$bus.$on('itemImgLoad', () => {
+      this.$bus.$on('homeItemImgLoad', () => {
         this.$refs.scroll && refresh()
       })
       //所有的组件都有$el

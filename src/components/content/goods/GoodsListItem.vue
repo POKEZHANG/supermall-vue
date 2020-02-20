@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="itemClick">
-    <img :src="goodsItem.show.img" alt="" @load="imgLoad">
+    <img :src="getImg" alt="" @load="imgLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -23,10 +23,29 @@
     methods: {
       //使用事件总线
       imgLoad() {
-        this.$bus.$emit('itemImgLoad')
+        // if(this.$route.path.indexOf('/detail')) {
+        //   this.$bus.$emit('detailItemImgLoad')
+        //   console.log('text');
+        // } else {
+        //   this.$bus.$emit('homeItemImgLoad')
+        //   console.log('text');
+        // }
+        // console.log(this.$route.path);
+        // console.log(this.$route.path.indexOf('/home'));
+        
+        if(this.$route.path.indexOf('home')) {
+          this.$bus.$emit('homeItemImgLoad')
+        } else if(this.$route.path.indexOf('detail')) {
+          this.$bus.$emit('detailItemImgLoad')
+        }
       },
       itemClick() {
         this.$router.push('/detail/' + this.goodsItem.iid)
+      }
+    },
+    computed: {
+      getImg() {
+        return  this.goodsItem.image || this.goodsItem.show.img
       }
     },
   }
