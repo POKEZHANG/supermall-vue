@@ -97,9 +97,9 @@
       this.getThemeTopY = debounce(() => {
         this.themeTopYs = [];
         this.themeTopYs.push(0);
-        this.themeTopYs.push(this.$refs.params.$el.offsetTop - 44);
-        this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44);
-        this.themeTopYs.push(this.$refs.recommends.$el.offsetTop - 44);
+        this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+        this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+        this.themeTopYs.push(this.$refs.recommends.$el.offsetTop);
         this.themeTopYs.push(Number.MAX_VALUE);
 
         // console.log(this.themeTopYs);
@@ -162,7 +162,8 @@
         product.price = this.goods.nowPrice
         product.iid = this.iid
 
-        this.$store.commit('addCart', product)
+        // this.$store.commit('addCart', product)
+        this.$store.dispatch('addCart', product)
       }
     },
   }
@@ -171,13 +172,15 @@
 <style scoped>
   #detail {
     position: relative;
-    z-index: 9999;
     background-color: #fff;
     height: 100vh;
+    z-index: 99;
   }
 
   .content {
-    height: calc(100% - 44px - 49px);
+    position: absolute;
+    top: 44px;
+    bottom: 60px;
   }
 
   .datail-navbar{
