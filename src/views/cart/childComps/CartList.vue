@@ -32,10 +32,10 @@
 
 <style scoped>
   .cart-list {
-    height: calc(100% - 44px)
+    height: 100%
   }
   .content {
-    height: calc(100% - 49px);
+    height: calc(100% - 49px - 40px - 44px);
     overflow: hidden;
   }
 </style>
