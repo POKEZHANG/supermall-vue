@@ -15,6 +15,7 @@
     <BackTop @click.native="backTop"
              v-show="isShowBackTop"></BackTop>
     <DetailBottomBar @addCart='addCart'></DetailBottomBar>
+    <!-- <Toast :message="message" :isShow="isShow"></Toast> -->
   </div>
 </template>
 
@@ -29,6 +30,7 @@
   import DetailBottomBar from './childComs/DetailBottomBar'
   import GoodsList from 'components/content/goods/GoodsList'
   import Scroll from 'components/common/scroll/Scroll'
+  // import Toast from 'components/common/toast/Toast'
   
 
   import {getDetail, getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
@@ -52,6 +54,8 @@
         themeTopYs: [],
         getThemeTopY: null,
         currentIndex: 0,
+        // message: '',
+        // isShow: false
       }
     },
     components: {
@@ -65,6 +69,7 @@
       DetailBottomBar,
       GoodsList,
       Scroll,
+      // Toast
     },
     created() {
       this.iid = this.$route.params.iid
@@ -154,7 +159,6 @@
         }
       },
       addCart() {
-        console.log("加入购物车");
         const product = {}
         product.img = this.topImages[0]
         product.title = this.goods.title
@@ -163,7 +167,18 @@
         product.iid = this.iid
 
         // this.$store.commit('addCart', product)
-        this.$store.dispatch('addCart', product)
+        //可以把vuex中action函数映射过来,原理跟getters映射相同
+        this.$store.dispatch('addCart', product).then(res => {
+          // this.show = true
+          // this.message = res
+
+          // setTimeout(() => {
+          //   this.show = false
+          //   this.message = ''
+          // },1500)
+          // console.log(this.$toast);
+          this.$toast.show(res, 2000)
+        })
       }
     },
   }

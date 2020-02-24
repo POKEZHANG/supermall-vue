@@ -4,7 +4,11 @@ import router from './router'
 import store from './store/index'
 import './registerServiceWorker'
 
+import toast from 'components/common/toast'
+
 Vue.config.productionTip = false
+
+Vue.use(toast)
 
 Vue.prototype.$bus = new Vue()
 
